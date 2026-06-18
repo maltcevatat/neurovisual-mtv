@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -29,12 +29,12 @@ import {
   ChevronRight,
 } from "lucide-react";
 
-const fadeUp = {
+const fadeUp: Variants = {
   hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.25, 0.1, 0.25, 1] } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number] } },
 };
 
-const staggerContainer = {
+const staggerContainer: Variants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
 };
@@ -194,9 +194,9 @@ function BonusCarousel() {
     setCurrent((prev) => (prev + dir + bonuses.length) % bonuses.length);
   }, []);
 
-  const variants = {
+  const variants: Variants = {
     enter: (d: number) => ({ x: d > 0 ? 80 : -80, opacity: 0 }),
-    center: { x: 0, opacity: 1, transition: { duration: 0.45, ease: [0.25, 0.1, 0.25, 1] } },
+    center: { x: 0, opacity: 1, transition: { duration: 0.45, ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number] } },
     exit: (d: number) => ({ x: d > 0 ? -80 : 80, opacity: 0, transition: { duration: 0.3 } }),
   };
 
@@ -722,7 +722,7 @@ export default function Home() {
             </div>
           </div>
           <div className="border-t border-white/5 pt-8 text-center text-[12px] text-muted-foreground font-light">
-            © 2024 NeuroVisual AI. Все права защищены.
+            © 2025 Нейровизуал от MTV. Все права защищены.
           </div>
         </div>
       </footer>
