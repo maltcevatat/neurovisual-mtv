@@ -1,0 +1,14 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "BaH4YPwtn6UWoXDwxrPEi"
+uri = "file://artifacts/neurovisual/src/assets/hero-woman.png"
+type = "image"
+title = "Hero woman photo"
+
+[[generated]]
+id = "jvJUJd8wEfIFccUqhHqHG"
+uri = "file://artifacts/neurovisual/src/assets/author-woman.png"
+type = "image"
+title = "About author portrait"

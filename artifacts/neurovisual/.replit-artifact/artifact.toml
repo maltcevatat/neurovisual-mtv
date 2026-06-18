@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Нейровизуал от MTV"
+version = "1.0.0"
+id = "artifacts/neurovisual"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 19149
+
+[services.development]
+run = "pnpm --filter @workspace/neurovisual run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/neurovisual", "run", "build" ]
+publicDir = "artifacts/neurovisual/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "19149"
+BASE_PATH = "/"
