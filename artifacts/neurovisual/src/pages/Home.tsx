@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import PaymentModal from "@/components/PaymentModal";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Accordion,
@@ -287,6 +288,9 @@ function BonusCarousel() {
 
 export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const openModal = useCallback(() => setShowModal(true), []);
+  const closeModal = useCallback(() => setShowModal(false), []);
 
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
@@ -309,7 +313,7 @@ export default function Home() {
           <div className="flex items-center gap-3">
             <Button
               data-testid="button-nav-join"
-              onClick={scrollToPrice}
+              onClick={openModal}
               className="rounded-full bg-primary/90 hover:bg-primary text-white px-5 py-2 text-[13px] font-normal h-auto"
             >
               Купить курс
@@ -740,7 +744,7 @@ export default function Home() {
                   <p className="text-[12px] text-muted-foreground font-light mb-8">Единоразово · без подписок</p>
                   <Button
                     data-testid="button-pricing-buy"
-                    onClick={scrollToPrice}
+                    onClick={openModal}
                     className="w-full rounded-xl bg-primary hover:bg-primary/90 text-white py-4 text-[14px] font-normal h-auto mb-4 shadow-[0_8px_40px_-8px_hsl(263_75%_60%/0.5)]"
                   >
                     Хочу в курс <ArrowRight className="ml-2 h-4 w-4" />
@@ -777,7 +781,7 @@ export default function Home() {
 
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="text-center mt-10">
               <Button
-                onClick={scrollToPrice}
+                onClick={openModal}
                 className="rounded-full bg-primary hover:bg-primary/90 text-white px-8 py-3 text-[14px] font-normal h-auto group"
               >
                 Хочу в курс <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
@@ -807,7 +811,7 @@ export default function Home() {
                 </div>
                 <Button
                   data-testid="button-final-cta"
-                  onClick={scrollToPrice}
+                  onClick={openModal}
                   className="rounded-full bg-white text-background hover:bg-white/90 px-10 py-4 text-[14px] font-normal h-auto shadow-2xl group"
                 >
                   Хочу в курс <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
@@ -825,16 +829,21 @@ export default function Home() {
       {/* ── FOOTER ── */}
       <footer className="border-t border-white/5 pt-14 pb-10">
         <div className="container mx-auto px-6 max-w-6xl">
-          <div className="grid md:grid-cols-3 gap-10 mb-12">
-            <div>
+          <div className="grid md:grid-cols-4 gap-10 mb-12">
+            <div className="md:col-span-1">
               <div className="text-[13px] tracking-[0.18em] uppercase text-foreground/70 mb-4 font-normal" style={{ fontFamily: "Inter, sans-serif" }}>
                 Нейровизуал от MTV
               </div>
-              <p className="text-[13px] text-muted-foreground font-light leading-relaxed">
+              <p className="text-[13px] text-muted-foreground font-light leading-relaxed mb-4">
                 Курс по созданию AI-визуалов: от концепции и промпта до готового материала.
+              </p>
+              <p className="text-[12px] text-muted-foreground/60 font-light leading-relaxed">
+                Самозанятая Мальцева Татьяна Владимировна<br />
+                ИНН 183403617282
               </p>
             </div>
             <div className="flex flex-col gap-3">
+              <p className="text-[11px] tracking-[0.16em] uppercase text-muted-foreground/50 font-light mb-1">Навигация</p>
               {[
                 { label: "Программа", href: "#program" },
                 { label: "Для кого", href: "#for-whom" },
@@ -846,23 +855,49 @@ export default function Home() {
                 </a>
               ))}
             </div>
+            <div className="flex flex-col gap-3">
+              <p className="text-[11px] tracking-[0.16em] uppercase text-muted-foreground/50 font-light mb-1">Документы</p>
+              {[
+                { label: "Публичная оферта", href: "/offer" },
+                { label: "Политика обработки персональных данных", href: "/privacy-policy" },
+                { label: "Согласие на обработку ПД", href: "/personal-data-consent" },
+                { label: "Согласие на рассылку", href: "/marketing-consent" },
+              ].map(({ label, href }) => (
+                <a key={href} href={href} className="text-[13px] font-light text-muted-foreground hover:text-foreground transition-colors leading-snug">
+                  {label}
+                </a>
+              ))}
+            </div>
             <div className="flex flex-col items-start md:items-end gap-5">
               <Button
                 data-testid="button-footer-join"
-                onClick={scrollToPrice}
+                onClick={openModal}
                 className="rounded-full bg-primary/90 hover:bg-primary text-white px-6 py-2 h-auto text-[13px] font-normal"
               >
                 Купить курс <ArrowRight className="ml-2 h-3.5 w-3.5" />
               </Button>
               <p className="text-[12px] text-muted-foreground font-light">2 790 ₽ · бессрочный доступ</p>
+              <a
+                href="mailto:maltceva-tat@mail.ru"
+                className="text-[13px] font-light text-muted-foreground hover:text-foreground transition-colors"
+              >
+                maltceva-tat@mail.ru
+              </a>
             </div>
           </div>
-          <div className="border-t border-white/5 pt-8 text-center text-[12px] text-muted-foreground font-light">
-            © 2025 Нейровизуал от MTV. Все права защищены.
+          <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-[12px] text-muted-foreground font-light">
+            <span>© 2026 Нейровизуал от MTV. Все права защищены.</span>
+            <div className="flex flex-wrap gap-4 justify-center">
+              <a href="/offer" className="hover:text-foreground transition-colors">Оферта</a>
+              <a href="/privacy-policy" className="hover:text-foreground transition-colors">Политика ПД</a>
+              <a href="/personal-data-consent" className="hover:text-foreground transition-colors">Согласие на ОПД</a>
+              <a href="/marketing-consent" className="hover:text-foreground transition-colors">Рассылка</a>
+            </div>
           </div>
         </div>
       </footer>
 
+      <PaymentModal open={showModal} onClose={closeModal} />
     </div>
   );
 }
