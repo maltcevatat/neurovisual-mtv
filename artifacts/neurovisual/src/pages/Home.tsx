@@ -361,7 +361,7 @@ export default function Home() {
 
         {/* ── HERO ── */}
         <section className="relative min-h-screen flex items-center overflow-hidden">
-          <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover object-[20%_center] md:object-center" src="/hero.mp4" />
+          <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover object-[70%_center] md:object-center" src="/hero.mp4" />
           <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-background/20" />
           <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-background/30" />
 
@@ -386,7 +386,7 @@ export default function Home() {
                   onClick={scrollToPrice}
                   className="rounded-full bg-primary hover:bg-primary/90 text-white px-8 py-3 text-[14px] font-normal h-auto group"
                 >
-                  Хочу в курс <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
+                  Войти в AI-будущее <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
                 </Button>
               </motion.div>
             </motion.div>
