@@ -17,13 +17,10 @@ import {
   Target,
   MessageCircle,
   Award,
-  Globe,
-  Share2,
   ChevronLeft,
   ChevronRight,
   X,
   Menu,
-  Star,
   Zap,
   Camera,
   Layers,
@@ -97,22 +94,22 @@ const lessons = [
 
 const bonuses = [
   {
-    img: "/bonus1.png",
+    img: "/bonus1.jpg",
     title: "Конспекты к каждому уроку",
     desc: "Шаги, промпты, подсказки. Можно открыть и повторить, не пересматривая видео.",
   },
   {
-    img: "/bonus2.png",
+    img: "/bonus2.jpg",
     title: "Библиотека промптов для нейрофотосессий",
     desc: "Готовые формулы для образов, стилей, сцен и подбора референсов.",
   },
   {
-    img: "/bonus3.png",
+    img: "/bonus3.jpg",
     title: "Карта действий для Midjourney",
     desc: "Что нажимать под задачу и что менять, если результат не тот.",
   },
   {
-    img: "/bonus4.png",
+    img: "/bonus4.jpg",
     title: "Бонусный урок: бесшовные карусели",
     desc: "Как сделать визуальный объект, который перетекает между слайдами.",
   },
@@ -122,7 +119,7 @@ const results = [
   { icon: <Camera className="w-4 h-4" />, text: "Нейрофото с вашим лицом — для аватара, контента, личного бренда" },
   { icon: <Layers className="w-4 h-4" />, text: "Обложки, которые выглядят как сделанные дизайнером" },
   { icon: <Zap className="w-4 h-4" />, text: "Карусель от идеи до готовых слайдов" },
-  { icon: <Star className="w-4 h-4" />, text: "Отредактированные фото без следов «дешёвого AI»" },
+  { icon: <Zap className="w-4 h-4" />, text: "Отредактированные фото без следов «дешёвого AI»" },
   { icon: <Camera className="w-4 h-4" />, text: "Художественные визуалы в Midjourney — управляемо, не случайно" },
   { icon: <Award className="w-4 h-4" />, text: "Именная книга для ребёнка — реальный осязаемый продукт" },
   { icon: <Target className="w-4 h-4" />, text: "Понимание системы, которое работает для любых будущих задач" },
@@ -364,20 +361,12 @@ export default function Home() {
 
         {/* ── HERO ── */}
         <section className="relative min-h-screen flex items-center overflow-hidden">
-          <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover" src="/hero.mp4" />
+          <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover object-[20%_center] md:object-center" src="/hero.mp4" />
           <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-background/20" />
           <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-background/30" />
 
           <div className="relative z-10 container mx-auto px-6 pt-24 pb-16">
             <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-xl">
-              {/* Social proof badge */}
-              <motion.div variants={fadeUp} className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/8 px-4 py-1.5 mb-8">
-                <span className="flex gap-0.5">
-                  {[...Array(5)].map((_, i) => <Star key={i} className="w-3 h-3 fill-primary text-primary" />)}
-                </span>
-                <span className="text-[12px] text-foreground/70 font-light">200+ участниц уже прошли курс</span>
-              </motion.div>
-
               <motion.p variants={fadeUp} className="text-[12px] tracking-[0.22em] uppercase text-primary/80 mb-5 font-light">
                 AI-визуалы без хаоса сервисов
               </motion.p>
@@ -388,10 +377,10 @@ export default function Home() {
                 от MTV
               </motion.div>
               <motion.p variants={fadeUp} className="text-[15px] text-white/65 font-light leading-relaxed mb-8 max-w-md">
-                За 7 уроков — нейрофото с вашим лицом, обложки и карусели для контента. Даже без дизайнерского опыта.
+                За 7 уроков — нейрофото с вашим лицом, именная книга для ребёнка, карусели и AI-визуалы — для себя, для блога, для заработка.
               </motion.p>
 
-              <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <motion.div variants={fadeUp}>
                 <Button
                   data-testid="button-hero-start"
                   onClick={scrollToPrice}
@@ -399,17 +388,6 @@ export default function Home() {
                 >
                   Хочу в курс <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
                 </Button>
-                <span className="text-[13px] text-white/40 font-light">2 790 ₽ · бессрочный доступ</span>
-              </motion.div>
-
-              {/* Quick result hints */}
-              <motion.div variants={fadeUp} className="flex flex-wrap gap-x-5 gap-y-2 mt-8">
-                {["Нейрофото с вашим лицом", "Обложки для блога", "AI-карусели"].map((hint) => (
-                  <span key={hint} className="flex items-center gap-1.5 text-[12px] text-white/45 font-light">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-primary/60 flex-shrink-0" />
-                    {hint}
-                  </span>
-                ))}
               </motion.div>
             </motion.div>
           </div>
@@ -532,7 +510,7 @@ export default function Home() {
             </motion.div>
           </div>
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9 }} className="w-full">
-            <img src="/system-diagram.png" alt="Система AI-визуала: 7 этапов" className="w-full block" style={{ maxHeight: "640px", objectFit: "cover", objectPosition: "center" }} />
+            <img src="/system-diagram.jpg" alt="Система AI-визуала: 7 этапов" className="w-full block" style={{ maxHeight: "640px", objectFit: "cover", objectPosition: "center" }} />
           </motion.div>
         </section>
 
@@ -660,10 +638,6 @@ export default function Home() {
                   <div>
                     <div className="font-serif text-[2.2rem] font-light text-primary mb-1">3+</div>
                     <div className="text-[11px] tracking-[0.18em] uppercase text-muted-foreground font-light">года с нейросетями</div>
-                  </div>
-                  <div>
-                    <div className="font-serif text-[2.2rem] font-light text-primary mb-1">200+</div>
-                    <div className="text-[11px] tracking-[0.18em] uppercase text-muted-foreground font-light">учеников курса</div>
                   </div>
                 </motion.div>
               </motion.div>
