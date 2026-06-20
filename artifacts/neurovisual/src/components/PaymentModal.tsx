@@ -1,19 +1,18 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ArrowRight, Lock } from "lucide-react";
+import { X, ArrowRight, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 interface PaymentModalProps {
   open: boolean;
   onClose: () => void;
 }
 
-const PAYMENT_URL = import.meta.env.VITE_PRODAMUS_PAYMENT_URL as string | undefined;
-
-function isValidEmail(v: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
-}
+const PAYMENT_URL =
+  import.meta.env.VITE_PRODAMUS_PAYMENT_URL ||
+  "https://link.payform.ru/?paymentLinkId=af1d2750-9a6c-4469-98e7-09cfda6dc022";
 
 function Checkbox({
   checked,
@@ -29,7 +28,9 @@ function Checkbox({
       aria-checked={checked}
       onClick={() => onChange(!checked)}
       className={`mt-0.5 flex-shrink-0 w-4 h-4 rounded flex items-center justify-center transition-all border ${
-        checked ? "bg-primary border-primary" : "bg-white/5 border-white/20 hover:border-white/35"
+        checked
+          ? "bg-primary border-primary"
+          : "bg-white/5 border-white/20 hover:border-white/35"
       }`}
     >
       {checked && (
@@ -47,49 +48,10 @@ function Checkbox({
   );
 }
 
-function Field({
-  label,
-  required,
-  error,
-  children,
-}: {
-  label: string;
-  required?: boolean;
-  error?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div>
-      <label className="block text-[12px] text-muted-foreground font-light mb-1.5 tracking-wide">
-        {label}
-        {required && <span className="text-primary/60 ml-1">*</span>}
-        {!required && (
-          <span className="text-muted-foreground/40 ml-1">(необязательно)</span>
-        )}
-      </label>
-      {children}
-      {error && (
-        <p className="text-[12px] text-red-400/80 mt-1.5 font-light">{error}</p>
-      )}
-    </div>
-  );
-}
-
 export default function PaymentModal({ open, onClose }: PaymentModalProps) {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [telegram, setTelegram] = useState("");
   const [consentPersonal, setConsentPersonal] = useState(false);
   const [consentMarketing, setConsentMarketing] = useState(false);
-  const [errors, setErrors] = useState<{
-    name?: string;
-    email?: string;
-    consent?: string;
-  }>({});
-  const [showNoPayment, setShowNoPayment] = useState(false);
-
-  const canProceed =
-    name.trim().length > 0 && isValidEmail(email) && consentPersonal;
+  const [consentError, setConsentError] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -111,43 +73,21 @@ export default function PaymentModal({ open, onClose }: PaymentModalProps) {
     };
   }, [open]);
 
-  const validate = () => {
-    const errs: typeof errors = {};
-    if (!name.trim()) errs.name = "Укажите ваше имя";
-    if (!email.trim()) errs.email = "Укажите email";
-    else if (!isValidEmail(email))
-      errs.email = "Введите корректный email, например: you@mail.ru";
-    if (!consentPersonal)
-      errs.consent = "Необходимо согласие на обработку персональных данных";
-    setErrors(errs);
-    return Object.keys(errs).length === 0;
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validate()) return;
-
-    if (PAYMENT_URL) {
-      window.open(PAYMENT_URL, "_blank", "noopener,noreferrer");
-      resetAndClose();
-    } else {
-      setShowNoPayment(true);
-    }
-  };
-
   const resetAndClose = useCallback(() => {
-    setName("");
-    setEmail("");
-    setTelegram("");
     setConsentPersonal(false);
     setConsentMarketing(false);
-    setErrors({});
-    setShowNoPayment(false);
+    setConsentError(false);
     onClose();
   }, [onClose]);
 
-  const inputClass =
-    "w-full rounded-xl px-4 py-3 text-[14px] font-light bg-white/5 border border-white/10 text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-primary/50 focus:bg-white/8 transition-all";
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!consentPersonal) {
+      setConsentError(true);
+      return;
+    }
+    window.location.href = PAYMENT_URL;
+  };
 
   const content = (
     <AnimatePresence>
@@ -172,14 +112,9 @@ export default function PaymentModal({ open, onClose }: PaymentModalProps) {
             exit={{ opacity: 0, y: 16, scale: 0.97 }}
             transition={{
               duration: 0.3,
-              ease: [0.25, 0.1, 0.25, 1] as [
-                number,
-                number,
-                number,
-                number
-              ],
+              ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number],
             }}
-            className="relative z-10 w-full max-w-md max-h-[92dvh] overflow-y-auto"
+            className="relative z-10 w-full max-w-md"
             onClick={(e) => e.stopPropagation()}
           >
             <div
@@ -219,149 +154,94 @@ export default function PaymentModal({ open, onClose }: PaymentModalProps) {
                   </div>
                 </div>
 
-                {showNoPayment ? (
-                  <div className="text-center py-4">
-                    <div className="w-12 h-12 rounded-full bg-primary/12 flex items-center justify-center mx-auto mb-5">
-                      <Lock className="w-5 h-5 text-primary/70" />
+                <p className="text-[13px] text-muted-foreground font-light leading-relaxed mb-6">
+                  Вы будете перенаправлены на защищённую страницу оплаты, где
+                  укажете свои данные и оплатите курс. Доступ откроется сразу
+                  после оплаты.
+                </p>
+
+                <form onSubmit={handleSubmit} noValidate>
+                  <div className="space-y-3 mb-6 border-t border-white/6 pt-5">
+                    <div className="flex items-start gap-3">
+                      <Checkbox
+                        checked={consentPersonal}
+                        onChange={(v) => {
+                          setConsentPersonal(v);
+                          if (v) setConsentError(false);
+                        }}
+                      />
+                      <span className="text-[12px] text-muted-foreground font-light leading-relaxed">
+                        Я принимаю условия{" "}
+                        <a
+                          href="/offer"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary/80 hover:text-primary underline underline-offset-2 transition-colors"
+                        >
+                          публичной оферты
+                        </a>{" "}
+                        и соглашаюсь на{" "}
+                        <a
+                          href="/personal-data-consent"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary/80 hover:text-primary underline underline-offset-2 transition-colors"
+                        >
+                          обработку персональных данных
+                        </a>{" "}
+                        в соответствии с{" "}
+                        <a
+                          href="/privacy-policy"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary/80 hover:text-primary underline underline-offset-2 transition-colors"
+                        >
+                          Политикой обработки персональных данных
+                        </a>
+                        .{" "}
+                        <span className="text-primary/60">*</span>
+                      </span>
                     </div>
-                    <p className="text-[15px] text-foreground/85 font-light leading-relaxed mb-2">
-                      Оплата скоро будет подключена.
-                    </p>
-                    <p className="text-[14px] text-muted-foreground font-light leading-relaxed">
-                      Если хотите забронировать место — напишите на{" "}
-                      <a
-                        href="mailto:maltceva-tat@mail.ru"
-                        className="text-primary hover:underline"
-                      >
-                        maltceva-tat@mail.ru
-                      </a>
-                    </p>
-                    <button
-                      onClick={resetAndClose}
-                      className="mt-6 text-[13px] text-muted-foreground hover:text-foreground transition-colors font-light"
-                    >
-                      Закрыть
-                    </button>
+                    {consentError && (
+                      <p className="text-[12px] text-red-400/80 font-light pl-7">
+                        Необходимо принять условия, чтобы продолжить
+                      </p>
+                    )}
+
+                    <div className="flex items-start gap-3">
+                      <Checkbox
+                        checked={consentMarketing}
+                        onChange={setConsentMarketing}
+                      />
+                      <span className="text-[12px] text-muted-foreground font-light leading-relaxed">
+                        Я соглашаюсь получать информационные и рекламные
+                        материалы о продуктах, услугах и предложениях.{" "}
+                        <a
+                          href="/marketing-consent"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary/80 hover:text-primary underline underline-offset-2 transition-colors"
+                        >
+                          Согласие на рассылку
+                        </a>
+                      </span>
+                    </div>
                   </div>
-                ) : (
-                  <form onSubmit={handleSubmit} noValidate>
-                    <div className="space-y-4 mb-5">
-                      <Field label="Имя" required error={errors.name}>
-                        <input
-                          type="text"
-                          value={name}
-                          onChange={(e) => {
-                            setName(e.target.value);
-                            if (errors.name)
-                              setErrors((p) => ({ ...p, name: undefined }));
-                          }}
-                          placeholder="Ваше имя"
-                          className={inputClass}
-                          autoComplete="given-name"
-                        />
-                      </Field>
 
-                      <Field label="Email" required error={errors.email}>
-                        <input
-                          type="email"
-                          value={email}
-                          onChange={(e) => {
-                            setEmail(e.target.value);
-                            if (errors.email)
-                              setErrors((p) => ({ ...p, email: undefined }));
-                          }}
-                          placeholder="your@email.ru"
-                          className={inputClass}
-                          autoComplete="email"
-                        />
-                      </Field>
+                  <Button
+                    type="submit"
+                    disabled={!consentPersonal}
+                    className="w-full rounded-xl bg-primary hover:bg-primary/90 text-white py-3.5 text-[14px] font-normal h-auto shadow-[0_8px_40px_-8px_hsl(263_75%_60%/0.45)] disabled:opacity-35 disabled:cursor-not-allowed disabled:shadow-none transition-all"
+                  >
+                    Перейти к оплате{" "}
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
 
-                      <Field label="Telegram username">
-                        <input
-                          type="text"
-                          value={telegram}
-                          onChange={(e) => setTelegram(e.target.value)}
-                          placeholder="@username"
-                          className={inputClass}
-                        />
-                      </Field>
-                    </div>
-
-                    <div className="space-y-3 mb-6 border-t border-white/6 pt-5">
-                      <div className="flex items-start gap-3">
-                        <Checkbox
-                          checked={consentPersonal}
-                          onChange={(v) => {
-                            setConsentPersonal(v);
-                            if (errors.consent)
-                              setErrors((p) => ({ ...p, consent: undefined }));
-                          }}
-                        />
-                        <span className="text-[12px] text-muted-foreground font-light leading-relaxed">
-                          Я соглашаюсь на обработку персональных данных и
-                          принимаю{" "}
-                          <a
-                            href="/personal-data-consent"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-primary/80 hover:text-primary underline underline-offset-2 transition-colors"
-                          >
-                            Согласие на обработку персональных данных
-                          </a>{" "}
-                          и{" "}
-                          <a
-                            href="/privacy-policy"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-primary/80 hover:text-primary underline underline-offset-2 transition-colors"
-                          >
-                            Политику обработки персональных данных
-                          </a>
-                          .{" "}
-                          <span className="text-primary/60">*</span>
-                        </span>
-                      </div>
-                      {errors.consent && (
-                        <p className="text-[12px] text-red-400/80 font-light pl-7">
-                          {errors.consent}
-                        </p>
-                      )}
-
-                      <div className="flex items-start gap-3">
-                        <Checkbox
-                          checked={consentMarketing}
-                          onChange={setConsentMarketing}
-                        />
-                        <span className="text-[12px] text-muted-foreground font-light leading-relaxed">
-                          Я соглашаюсь получать информационные и рекламные
-                          материалы о продуктах, услугах и предложениях.{" "}
-                          <a
-                            href="/marketing-consent"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-primary/80 hover:text-primary underline underline-offset-2 transition-colors"
-                          >
-                            Согласие на рассылку
-                          </a>
-                        </span>
-                      </div>
-                    </div>
-
-                    <Button
-                      type="submit"
-                      disabled={!canProceed}
-                      className="w-full rounded-xl bg-primary hover:bg-primary/90 text-white py-3.5 text-[14px] font-normal h-auto shadow-[0_8px_40px_-8px_hsl(263_75%_60%/0.45)] disabled:opacity-35 disabled:cursor-not-allowed disabled:shadow-none transition-all"
-                    >
-                      Перейти к оплате{" "}
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-
-                    <p className="text-center text-[11px] text-muted-foreground font-light flex items-center justify-center gap-1.5 mt-3">
-                      <Lock className="w-3 h-3" /> Безопасная оплата · доступ
-                      сразу после оплаты
-                    </p>
-                  </form>
-                )}
+                  <p className="text-center text-[11px] text-muted-foreground font-light flex items-center justify-center gap-1.5 mt-3">
+                    <ShieldCheck className="w-3 h-3" /> Безопасная оплата ·
+                    доступ сразу после оплаты
+                  </p>
+                </form>
               </div>
             </div>
           </motion.div>

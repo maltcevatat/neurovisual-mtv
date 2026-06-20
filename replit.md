@@ -46,18 +46,24 @@
 
 ## Payment flow
 
+**Персональные данные на стороне Replit не собираются и не хранятся.**
+
 1. Кнопки «Купить курс» / «Хочу в курс» → открывают `PaymentModal`
-2. Модал: Имя (required), Email (required), Telegram (optional)
-3. Чекбоксы: согласие на ОПД (обязательный) + согласие на рассылку (опциональный)
-4. Кнопка «Перейти к оплате» disabled пока форма невалидна
-5. При submit: если `VITE_PRODAMUS_PAYMENT_URL` заполнен — открывает Продамус в новой вкладке; иначе показывает сообщение с maltceva-tat@mail.ru
-6. После оплаты Продамус редиректит на `/thanks`
+2. Модал: только два чекбокса согласий (полей ввода нет)
+3. Обязательный чекбокс: принятие оферты + согласие на ОПД
+4. Необязательный чекбокс: согласие на рассылку
+5. Кнопка «Перейти к оплате» disabled пока не поставлен обязательный чекбокс
+6. При submit: `window.location.href = PAYMENT_URL` — переход в текущей вкладке на Продамус
+7. Покупатель вводит имя/email/телефон и оплачивает на стороне Продамуса
+8. После оплаты Продамус редиректит на `/thanks` → кнопка входа в Telegram-канал
 
 ## Environment variables
 
-Нужно заполнить в `.env` или через Replit Secrets:
-- `VITE_PRODAMUS_PAYMENT_URL` — URL платёжной страницы Продамус (например `https://mtvai.payform.ru/`)
-- `VITE_TELEGRAM_INVITE_URL` — ссылка-приглашение в закрытый Telegram-канал (показывается на `/thanks`)
+Заполнены в `.env` (dev) и должны быть продублированы через Replit Secrets (production):
+- `VITE_PRODAMUS_PAYMENT_URL` — `https://link.payform.ru/?paymentLinkId=af1d2750-9a6c-4469-98e7-09cfda6dc022`
+- `VITE_TELEGRAM_INVITE_URL` — `https://t.me/+J3tB6UNtMHkyYzBi`
+
+Оба значения имеют hardcoded fallback в коде — лендинг работает даже без `.env`.
 
 ## Legal pages
 
