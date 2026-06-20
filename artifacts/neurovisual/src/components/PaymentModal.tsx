@@ -155,9 +155,9 @@ export default function PaymentModal({ open, onClose }: PaymentModalProps) {
                 </div>
 
                 <p className="text-[13px] text-muted-foreground font-light leading-relaxed mb-6">
-                  Вы будете перенаправлены на защищённую страницу оплаты, где
-                  укажете свои данные и оплатите курс. Доступ откроется сразу
-                  после оплаты.
+                  Доступ к обучению откроется сразу после оплаты. Ссылку на
+                  закрытый Telegram-канал вы получите на email, указанный при
+                  оформлении.
                 </p>
 
                 <form onSubmit={handleSubmit} noValidate>
